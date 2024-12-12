@@ -1,13 +1,28 @@
 const express = require('express');
 const router = express.Router();
 const projects = require("../controllers/projects.controller");
+const joi = require('joi');
 
+const schema = joi.object({
+    project_name:joi.string().required(),
+    color:joi.string().required(),
+    is_favourite:joi.boolean(),
+    user_id:joi.number().integer().required()
+});
 
-router.post("/",projects.create);
+const validateProject = (req,res,next) => {
+    const {error} = schema.validate(req.body,{abortEarly:false});
+    if(error){
+        return res.status(400).send({message: 'Validation invalid'});
+    }
+    next();
+}
+
+router.post("/", validateProject, projects.create);
 router.get("/",projects.findAll);
-router.get("/:name",projects.findByName);
-router.put("/:name",projects.update);
-router.delete("/:name",projects.delete);
+router.get("/:id",projects.findById);
+router.put("/:id", validateProject, projects.update);
+router.delete("/:id",projects.delete);
 router.delete("/",projects.deleteAll);
 
 

@@ -1,81 +1,72 @@
 const db = require("../models/db");
-const task = require("../models/tasks.model");
-const project = require("../models/projects.model");
 
-exports.create = (req,res)=>{
-    const {content,project_name,description, due_Date, is_completed, created_at} = req.body;
-    project.findByName(project_name,(err,row)=>{
-        if(err){
-            res.status(500).send({message:err.message});
-        }else {
-            if(!row){
-                res.send("The entered project name is invalid");
-            }else{
-                task.create({content,project_name,description, due_Date, is_completed, created_at},(err,data)=>{
-                    if(err){
-                        res.status(500).send({message:err.message});
-                    }else{
-                        res.send(data);
-                    }
-                });
-            }
+const Project = require('../models/projects.model');
+const Task = require('../models/tasks.model');
 
+exports.create = async (req, res) => {
+    try {
+        const { content, project_Id, description, due_Date, is_completed, created_at } = req.body;
+
+        const id = await Project.findById(project_Id);
+        if (!id) {
+            return res.status(400).send({ message: "The entered project name is invalid" });
         }
-    })
+
+        const task = await Task.create({ content, project_Id, description, due_Date, is_completed, created_at });
+        res.send(task);
+    } catch (err) {
+        res.status(500).send({ message: err.message });
+    }
 };
 
-exports.findAll = (req,res)=>{
-    task.findAll((err,data)=>{
-        if(err){
-            res.status(500).send({message:err.message});
-        }else{
-            res.send(data);
-        }
-    });
+exports.findAll = async (req, res) => {
+    try {
+        const tasks = await Task.findAll(req);
+        res.send(tasks);
+    } catch (err) {
+        res.status(500).send({ message: err.message });
+    }
 };
 
-exports.findByProjectName = (req,res)=>{
-    const project_name = req.params.project_name;
-    task.findByProjectName(project_name,(err,row)=>{
-        if(err){
-            res.status(500).send({message:err.message});
-        }else if(!row){
-            res.status(404).send({message:`With this project_name no task is there`});
-        }else{
-            res.send(row);
+exports.findByProjectId = async (req, res) => {
+    try {
+        const project_Id = req.params.project_Id;
+
+        const tasks = await Task.findByProjectId(project_Id);
+        if (tasks.length === 0) {
+            return res.status(404).send({ message: "No tasks found for the given project id" });
         }
-    });
+        res.send(tasks);
+    } catch (err) {
+        res.status(500).send({ message: err.message });
+    }
 };
 
-exports.update = (req,res)=>{
-    const id = req.params.id;
-    task.update(id,req.body,(err,data)=>{
-        if(err){
-            res.status(500).send({message:err.message});
-        }else{
-            res.send(data);
-        }
-    });
+exports.update = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const updatedTask = await Task.update(id, req.body);
+        res.send(updatedTask);
+    } catch (err) {
+        res.status(500).send({ message: err.message });
+    }
 };
 
-exports.delete = (req,res)=>{
-    const id = req.params.id;
-    task.delete(id,(err)=>{
-        if(err){
-            res.status(500).send({message:err.message});
-        }else{
-            res.send("Deleted successfully");
-        }
-    });
+exports.delete = async (req, res) => {
+    try {
+        const id = req.params.id;
+        await Task.delete(id);
+        res.send({ message: "Task deleted successfully" });
+    } catch (err) {
+        res.status(500).send({ message: err.message });
+    }
 };
 
-exports.deleteAll = (req,res)=>{
-    task.deleteAll((err)=>{
-        if(err){
-            res.status(500).send({message:err.message});
-        }else{
-            res.send("Deleted all the tasks");
-        }
-    });
+exports.deleteAll = async (req, res) => {
+    try {
+        await Task.deleteAll();
+        res.send({ message: "All tasks deleted successfully" });
+    } catch (err) {
+        res.status(500).send({ message: err.message });
+    }
 };
-

@@ -1,13 +1,12 @@
-const Project = require('../models/projects.model');
-const task = require("../models/tasks.model");
+const Comment = require('../models/comments.model');
 
 
 exports.create = async (req, res) => {
 
-    const { project_name, color, is_favourite, user_id } = req.body;
+    const { comment, created_at, project_Id, task_Id } = req.body;
 
     try {
-        const data = Project.create({ project_name, color, is_favourite, user_id });
+        const data = Comment.create({ comment, created_at, project_Id, task_Id });
         res.send(data);
     } catch (err) {
         res.status(500).send({ message: err.message });
@@ -17,7 +16,7 @@ exports.create = async (req, res) => {
 exports.findAll = async (req, res) => {
 
     try {
-        const data = await Project.findAll();
+        const data = await Comment.findAll();
         res.send(data);
     } catch (err) {
         res.status(500).send({ message: err.message });
@@ -29,15 +28,12 @@ exports.findById = async (req, res) => {
     const id = req.params.id;
 
     try {
-        const data = await Project.findById(id);
+        const data = await Comment.findById(id);
 
         if (!data) {
-            res.status(404).send({ message: "Project not found" });
+            res.status(404).send({ message: "Comment not found" });
         }
-
-         const tasks = await task.findByProjectId(id);
-         const result = { ...data, tasks };
-        res.send(result);
+        res.send(data);
 
     } catch (err) {
         res.status(500).send({ message: err.message });
@@ -48,7 +44,7 @@ exports.findById = async (req, res) => {
 exports.update = async (req, res) => {
     const id = req.params.id;
     try {
-        const data = await Project.update(id, req.body);
+        const data = await Comment.update(id, req.body);
         res.send(data);
     } catch (err) {
         res.status(500).send({ message: err.message });
@@ -58,8 +54,8 @@ exports.update = async (req, res) => {
 exports.delete = async (req, res) => {
     const id = req.params.id;
     try {
-         await Project.delete(id);
-        res.send("Project deleted");
+         await Comment.delete(id);
+        res.send("comment deleted");
     } catch (err) {
         res.status(500).send({ message: err.message });
     }
@@ -68,8 +64,8 @@ exports.delete = async (req, res) => {
 exports.deleteAll = async (req, res) => {
 
     try {
-        await Project.deleteAll();
-        res.send("All Projects deleted");
+        await Comment.deleteAll();
+        res.send("All comments deleted");
     } catch (err) {
         res.status(500).send({ message: err.message });
     }
