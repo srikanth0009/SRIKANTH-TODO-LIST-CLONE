@@ -8,7 +8,7 @@ exports.create = async (req, res) => {
 
     try {
         const data = Project.create({ project_name, color, is_favourite, user_id });
-        res.send(data);
+        res.send("project created");
     } catch (err) {
         res.status(500).send({ message: err.message });
     }
@@ -24,20 +24,20 @@ exports.findAll = async (req, res) => {
     }
 };
 
-exports.findById = async (req, res) => {
+exports.findByUserId = async (req, res) => {
 
     const id = req.params.id;
 
     try {
-        const data = await Project.findById(id);
+        const data = await Project.findByUserId(id);
 
         if (!data) {
             res.status(404).send({ message: "Project not found" });
         }
 
-         const tasks = await task.findByProjectId(id);
-         const result = { ...data, tasks };
-        res.send(result);
+        //  const tasks = await task.findByProjectId(id);
+        //  const result = { ...data, tasks };
+        res.send(data);
 
     } catch (err) {
         res.status(500).send({ message: err.message });
@@ -49,7 +49,7 @@ exports.update = async (req, res) => {
     const id = req.params.id;
     try {
         const data = await Project.update(id, req.body);
-        res.send(data);
+        res.send("updated successfully");
     } catch (err) {
         res.status(500).send({ message: err.message });
     }

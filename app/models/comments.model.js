@@ -26,7 +26,7 @@ const Comment ={
          return await dbOperation(db.all.bind(db),sql);
     },
 
-    findById : async (id) => {
+    findByProjectId : async (id) => {
             const sql = "SELECT * FROM comments WHERE project_Id = ? ";
             return await dbOperation(db.all.bind(db),sql,[id]);
     },

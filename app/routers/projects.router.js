@@ -13,14 +13,14 @@ const schema = joi.object({
 const validateProject = (req,res,next) => {
     const {error} = schema.validate(req.body,{abortEarly:false});
     if(error){
-        return res.status(400).send({message: 'Validation invalid'});
+        return res.status(400).send({message: ' Project Validation invalid'});
     }
     next();
 }
 
 router.post("/", validateProject, projects.create);
 router.get("/",projects.findAll);
-router.get("/:id",projects.findById);
+router.get("/:id",projects.findByUserId);
 router.put("/:id", validateProject, projects.update);
 router.delete("/:id",projects.delete);
 router.delete("/",projects.deleteAll);

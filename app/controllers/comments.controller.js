@@ -1,4 +1,6 @@
 const Comment = require('../models/comments.model');
+const Project = require('../models/projects.model');
+const Task = require('../models/tasks.model');
 
 
 exports.create = async (req, res) => {
@@ -6,8 +8,17 @@ exports.create = async (req, res) => {
     const { comment, created_at, project_Id, task_Id } = req.body;
 
     try {
+        const pid = await Project.findById(project_Id);
+        if (!pid) {
+            return res.status(400).send({ message: "The entered project name is invalid" });
+        }
+        const tid = await Task.findById(task_Id);
+        if (!tid) {
+            return res.status(400).send({ message: "The entered task id is invalid" });
+        }
+
         const data = Comment.create({ comment, created_at, project_Id, task_Id });
-        res.send(data);
+        res.send("comment created successfully");
     } catch (err) {
         res.status(500).send({ message: err.message });
     }
@@ -23,12 +34,12 @@ exports.findAll = async (req, res) => {
     }
 };
 
-exports.findById = async (req, res) => {
+exports.findByProjectId = async (req, res) => {
 
     const id = req.params.id;
 
     try {
-        const data = await Comment.findById(id);
+        const data = await Comment.findByProjectId(id);
 
         if (!data) {
             res.status(404).send({ message: "Comment not found" });
@@ -45,7 +56,7 @@ exports.update = async (req, res) => {
     const id = req.params.id;
     try {
         const data = await Comment.update(id, req.body);
-        res.send(data);
+        res.send("comment updated successfully");
     } catch (err) {
         res.status(500).send({ message: err.message });
     }

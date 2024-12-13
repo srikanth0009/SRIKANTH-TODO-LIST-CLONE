@@ -26,7 +26,7 @@ const Project ={
          return await dbOperation(db.all.bind(db),sql);
     },
 
-    findById : async (id) => {
+    findByUserId : async (id) => {
             const sql = "SELECT * FROM projects WHERE user_id = ? ";
             return await dbOperation(db.all.bind(db),sql,[id]);
     },

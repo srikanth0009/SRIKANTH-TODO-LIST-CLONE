@@ -20,7 +20,7 @@ const validateComment = (req,res,next) => {
 
 router.post("/", validateComment, comments.create);
 router.get("/", comments.findAll);
-router.get("/:id", comments.findById);
+router.get("/:id", comments.findByProjectId);
 router.put("/:id", validateComment, comments.update);
 router.delete("/:id", comments.delete);
 router.delete("/", comments.deleteAll);
