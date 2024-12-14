@@ -22,12 +22,12 @@ const Project ={
     },
 
     findAll : async () => {
-        const sql = "SELECT * FROM projects";
+        const sql = "SELECT * FROM projects limit 100";
          return await dbOperation(db.all.bind(db),sql);
     },
 
     findByUserId : async (id) => {
-            const sql = "SELECT * FROM projects WHERE user_id = ? ";
+            const sql = "SELECT * FROM projects WHERE id = ? ";
             return await dbOperation(db.all.bind(db),sql,[id]);
     },
 
